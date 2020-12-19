@@ -11,7 +11,7 @@ function h($s){
 	if(!isset($_SESSION['join'])){
 		header('Location: index.php');
 		exit();
-	}ss
+	}
 
 ?>
 
