@@ -22,13 +22,24 @@
 			$error['password'] = 'blank';
 		}
 
+		$fileName = $_FILES['image']['name'];
+
+		if(!empty($fileName)){
+			$ext = substr($fileName, -3);
+
+			if($ext !== 'jpg' && $ext !== 'png'){
+				$error['image'] = 'type';
+			}
+		}
+
 		if(empty($error)){
 		
-		$image = date('YmdHis') . $_FILES['image'].['name'];
-		move_uploaded_file($_FILES['image'].['tmp_name'],
+		$image = date('YmdHis').$_FILES['image']['name'];
+		move_uploaded_file($_FILES['image']['tmp_name'],
 		'../member_picture/' . $image);
-
+		
 		$_SESSION['join'] = $_POST;
+		$_SESSION['join']['image'] = $image;
 		header('Location: check.php');
 		exit();
 		}
@@ -95,6 +106,12 @@
 		<dt>写真など</dt>
 		<dd>
         	<input type="file" name="image" size="35" value="test"  />
+			<?php if($error['image'] === 'type'){  ?>
+			<p class="error">*写真などは「.jpg」または「.png」のファイルを指定してください</p>
+			<?php }?>
+			<?php if(!empty($error)){  ?>
+			<p class="error">*恐れ入りますが、もう一度選択してください。</p>
+			<?php }?>
         </dd>
 	</dl>
 	<div><input type="submit" value="入力内容を確認する" /></div>
