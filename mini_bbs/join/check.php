@@ -5,11 +5,31 @@ function h($s){
 }
 
 	session_start();
+	require('../dbconnect.php');
 
 	//print ($_SESSION['join']);
 
 	if(!isset($_SESSION['join'])){
 		header('Location: index.php');
+		exit();
+	}
+	if(!empty($_POST)){
+		$stmt = $db->prepare('INSERT INTO members SET name=?,
+		email=?, password=?, picture=?, created=NOW()');
+
+		//SQL実行
+		$stmt->execute(array(
+			$_SESSION['join']['name'],
+			$_SESSION['join']['email'],
+			sha1($_SESSION['join']['password']),
+			$_SESSION['join']['image']
+		));
+
+		//セッションの削除
+		unset($_SESSION['join']);
+
+		//画面遷移
+		header('Location: thanks.php');
 		exit();
 	}
 

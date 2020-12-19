@@ -4,6 +4,7 @@
 		return htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
 	}
 	session_start();
+	require('../dbconnect.php');
 
 	if(!empty($_POST)){
 
@@ -31,6 +32,24 @@
 				$error['image'] = 'type';
 			}
 		}
+
+		//　アカウントの重複をチェック
+		//入力状態が正しいのを確認してからDB通信を行う
+		if(empty($error)){
+			$member = $db->prepare('SELECT COUNT(*) AS cnt FROM members WHERE email=?');
+
+			//SQLの実行
+			$member->execute(array($_POST['email']));
+
+			//レコードの確認
+			$record = $member->fetch();
+
+			//レコード数>0で重複エラー
+			if($record['cnt'] > 0){
+				$error['email'] = 'duplicate';
+			} 
+		}
+
 
 		if(empty($error)){
 		
@@ -89,6 +108,9 @@
 			 ?>" />
 			<?php if($error['email'] === 'blank'){  ?>
 			<p class="error">*メールアドレスを入力してください</p>
+			<?php }?>
+			<?php if($error['email'] === 'duplicate'){  ?>
+			<p class="error">*指定されたメールアドレスはすでに登録されています。</p>
 			<?php }?>
 		<dt>パスワード<span class="required">必須</span></dt>
 		<dd>
