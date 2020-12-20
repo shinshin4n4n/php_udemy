@@ -1,11 +1,8 @@
 <?php
 
-function h($s){
-	return htmlspecialchars($s, ENT_QUOTES);
-}
-
 	session_start();
 	require('../dbconnect.php');
+	require('../function.php');
 
 	//print ($_SESSION['join']);
 

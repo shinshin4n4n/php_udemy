@@ -1,9 +1,7 @@
 <?php
 	//phpinfo();
-	function h($s){
-		return htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
-	}
 	session_start();
+	require('../function.php');
 	require('../dbconnect.php');
 
 	if(!empty($_POST)){
