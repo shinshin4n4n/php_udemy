@@ -5,8 +5,13 @@
   require('dbconnect.php');
 
   //
-  if(!empty($_POST)){
+  if($_COOKIE['email'] !== ''){
+    $email = $_COOKIE['email'];
+  }
 
+  if(!empty($_POST)){
+      $email = $_POST['email'];
+      
       if($_POST['email'] !== '' && $_POST['password'] !== ''){
         $login = $db->prepare('SELECT * FROM members WHERE email=? AND password=?');
 
@@ -21,6 +26,13 @@
 
           $_SESSION['id'] = $member['id'];
           $_SESSION['time'] = time();
+
+          //次回から自動でログインにチェック→クッキーにアドレスを保存
+          if($_POST['save'] === 'on'){
+            setcookie('email', $_POST['email'], time()+60*60*24);
+          }
+
+
           header('Location: index.php');
           exit();
 
@@ -59,7 +71,7 @@
       <dl>
         <dt>メールアドレス</dt>
         <dd>
-          <input type="text" name="email" size="35" maxlength="255" value="<?php echo h($_POST['email']); ?>" />
+          <input type="text" name="email" size="35" maxlength="255" value="<?php echo h($email); ?>" />
           <?php if($error['login'] === 'blank'){  ?>
 			    <p class="error">*メールアドレスとパスワードを入力してください。</p>
 			    <?php }?>
